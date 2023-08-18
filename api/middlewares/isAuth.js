@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken'
 export const isAuth = (req, res, next) => {
   try {
-    token = req.cookies.acces_token
+    const token = req.cookies.acces_token
     if (!token) {
       return res.status(401).json({
         "errors": {
-          "msg": "Not Authorized"
+          "msg": "Token Not Found"
         }
       })
     }
@@ -15,7 +15,7 @@ export const isAuth = (req, res, next) => {
     res.locals.user = userdata
     next()
   } catch (error) {
-    return res.status(401).json({
+    return res.status(401).jso({
       "errors": {
         "msg": "Not Authorized"
       }

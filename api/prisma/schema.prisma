@@ -29,7 +29,7 @@ model User {
 model Blog {
   id            String    @id @default(cuid())
   createdAt     DateTime  @default(now())
-  title         String    @db.Char(500)
+  title         String
   slug          String    @unique
   content       String
   feature_image String

@@ -31,7 +31,6 @@ export const Signup = async (req, res) => {
     user.password = undefined;
     return res.status(201).json(user)
   } catch (error) {
-    console.log(error)
     return res.status(401).json({
       "errors": {
         "msg": "username or pasword Already Exiss"
@@ -82,7 +81,6 @@ export const Signin = async (req, res) => {
       .status(201)
       .json(user)
   } catch (error) {
-    console.log(error)
     return res.status(401).json({
       "errors": {
         "msg": "Invalid Credintials"
