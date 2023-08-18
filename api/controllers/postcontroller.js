@@ -64,17 +64,24 @@ export const GetAllPosst = async (req, res) => {
     const posts = await prisma.blog.findMany({
       skip: offset,
       take: limit,
+      orderBy: {
+        createdAt: "desc"
+
+      },
       select: {
         title: true,
         id: true,
         slug: true,
         feature_image: true,
+        createdAt: true,
         author: {
+
           select: {
             id: true,
             name: true,
             username: true,
           }
+
         },
         _count: {
           select: {
@@ -237,6 +244,161 @@ export const GetPostByUser = async (req, res) => {
         "msg": "Not Found"
       }
     })
+  }
+}
+export const CommentValidation = [
+  body("content").notEmpty().withMessage("Content is Required")
+]
+export const CreateComment = async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ "errors": errors.array() })
+  }
+  const { content } = req.body
+  try {
+    const post = await prisma.comment.create({
+      data: {
+        content,
+        author: { connect: { id: res.locals.user.id } },
+        blog: { connect: { id: req.params.id } }
+      }
+    })
+    return res.status(201).json(post)
+  } catch (error) {
+    return res.status(401).json({
+      "errors": {
+        "msg": "Not Found"
+      }
+    })
+  }
+}
+
+export const GetComments = async (req, res) => {
+  try {
+
+    const data = await prisma.comment.findMany({
+      where: {
+        blogId: req.params.id
+      },
+      include: {
+        author: {
+          select: {
+            name: true,
+            username: true,
+            id: true,
+            profile_image: true,
+          }
+        }
+      }
+    })
+    return res.status(200).json(data)
+  } catch (error) {
+
+    return res.status(404).json({
+      "errors": {
+        "msg": "Not Found"
+      }
+    })
+  }
+}
+
+export const DeleteComment = async (req, res) => {
+  try {
+    const data = await prisma.comment.findUnique({
+      where: {
+        id: req.params.id
+      },
+      include: { author: true }
+    })
+    if (data.author.id !== res.locals.user.id) {
+      return res.status(401).json({
+        "errors": {
+          "msg": "Not Authorized"
+        }
+      })
+    }
+    await prisma.comment.delete({
+      where: {
+        id: req.params.id
+      }
+    })
+    return res.status(200).json({
+      "msg": "Comment Deleted"
+    })
+  } catch (error) {
+    return res.status(401).json({
+      "errors": {
+        "msg": "Not Found"
+      }
+    })
+
+  }
+}
+
+export const createLike = async (req, res) => {
+  try {
+    const data = await prisma.like.findFirst({
+      where: {
+        authorId: res.locals.user.id,
+        blogId: req.params.id
+      }
+    })
+    if (data) {
+      return res.status(401).json({
+        "errors": {
+          "msg": "Already Liked"
+        }
+      })
+    }
+    const like = await prisma.like.create({
+      data: {
+        author: { connect: { id: res.locals.user.id } },
+        blog: { connect: { id: req.params.id } }
+      }
+    })
+    return res.status(201).json(like)
+
+  } catch (error) {
+    return res.status(404).json({
+      "errors": {
+        "msg": "Not Found"
+      }
+    })
+
+  }
+}
+
+export const deleteLike = async (req, res) => {
+  try {
+    const data = await prisma.like.findFirst({
+      where: {
+        authorId: res.locals.user.id,
+        blogId: req.params.id
+      }
+    })
+    if (!data) {
+      return res.status(401).json({
+        "errors": {
+          "msg": "Not Liked"
+        }
+      })
+    }
+    await prisma.like.delete({
+      where: {
+        id: data.id
+      }
+    })
+    return res.status(200).json({
+      "msg": "Like Deleted"
+    })
+
+  } catch (error) {
+    return res.status(404).json({
+      "errors": {
+        "msg": "Not Found"
+      }
+    })
+
   }
 }
 
