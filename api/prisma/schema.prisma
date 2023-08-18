@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  createdAt     DateTime  @default(now())
+  email         String    @unique
+  name          String
+  role          Role      @default(USER)
+  username      String    @unique
+  password      String
+  profile_photo String?
+  cover_photo   String?
+  social_link   Json?     @db.Json
+  Blog          Blog[]
+  Comment       Comment[]
+  Like          Like[]
+}
+
+model Blog {
+  id            String    @id @default(cuid())
+  createdAt     DateTime  @default(now())
+  title         String    @db.Char(500)
+  slug          String    @unique
+  content       String
+  feature_image String
+  isFeatured    Boolean   @default(false)
+  author        User      @relation(fields: [authorId], references: [id])
+  authorId      String
+  tags          String[]
+  Comment       Comment[]
+  Like          Like[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  content   String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  blog      Blog     @relation(fields: [blogId], references: [id])
+  blogId    String
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  blog      Blog     @relation(fields: [blogId], references: [id])
+  blogId    String
+}
+
+enum Role {
+  USER
+  ORG
+}
