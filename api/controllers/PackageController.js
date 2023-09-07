@@ -19,13 +19,13 @@ export const CreatePackage = async (req, res) => {
         content: data.content,
         feature_image: data.feature_image,
         slug: slug,
-        price: data.price,
+        price: parseFloat(data.price),
         tags: data.tags,
         departure: data.departure,
-        duration: data.duration,
+        duration: parseInt(data.duration),
         location: data.location,
-        Seat: data.Seat,
-        aivable_seats: data.Seat,
+        Seat: parseInt(data.Seat),
+        aivable_seats: parseInt(data.Seat),
         from_place: data.from,
         author: {
           connect: { id: res.locals.user.id }
@@ -90,5 +90,55 @@ export const GetAllPackage = async (req, res) => {
       }
     })
 
+  }
+}
+
+export const GetPackageBySlug = async (req, res) => {
+  const { slug } = req.params;
+  try {
+    const mypackage = await prisma.package.findUnique({
+      where: {
+        slug: slug
+      },
+      include: {
+        author: true
+      }
+
+    })
+    return res.status(200).json(mypackage)
+
+  } catch (err) {
+    console.log(err)
+    return res.status(401).json({
+      "errors": {
+        "msg": err
+      }
+    })
+
+
+  }
+}
+
+export const SearchPackage = async (req, res) => {
+  const { searchq } = req.query;
+  try {
+    const myData = await prisma.package.findMany({
+      take: 6,
+      where: {
+        title: {
+          search: searchq
+        },
+        content: {
+          search: searchq
+        }
+      }
+    })
+    return res.status(200).json(myData)
+
+  } catch (err) {
+    console.log(err)
+    return res.status(401).json({
+      "errors": err
+    })
   }
 }
