@@ -1,27 +1,51 @@
 import React, { useEffect } from 'react'
 import ImgBG from '../assets/LoginBG.jpeg'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLoginMutation } from '../slices/UserSlice'
+import { setUser } from '../slices/AuthSlice'
 
 const Login = () => {
-
-  useEffect(() => {
-    document.title = 'Signin | CholoJai.xyz'
-  }, [])
   const schema = yup.object().shape({
     email: yup.string().email().required("Valid email is required"),
-    password: yup.string().min(8).required("Password is required"),
+    password: yup.string().min(5).required("Password is required"),
 
   })
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   });
-  console.log(errors)
-  const onSubmit = (data) => {
-    console.log(data)
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+
+  const [login, { isLoading, error }] = useLoginMutation()
+  const { User } = useSelector((state) => state.auth)
+
+  useEffect(() => {
+    document.title = 'Signin | CholoJai.xyz'
+    if (User) {
+      navigate('/')
+    }
+  }, [navigate, User])
+
+
+
+  console.log(error)
+  const onSubmit = async (data) => {
+    try {
+      const { email, password } = data
+      const res = await login({ email, password }).unwrap()
+      console.log(res)
+      dispatch(setUser(res))
+
+
+    } catch (err) {
+      console.log(err)
+
+    }
   }
   return (
     <>
@@ -43,6 +67,9 @@ const Login = () => {
           <form className='bg-white w-[70%] mx-auto md:mx-auto' onSubmit={handleSubmit(onSubmit)}>
             <h1 className="text-neutral-900 font-bold text-2xl mb-1">Hello Again!</h1>
             <p class="text-sm font-normal font-sans text-neutral-900 mb-7">Welcome Back</p>
+            {error?.data ? <div className="alert alert-error w-full max-w-xs text-sm text-white">
+              <span> {error.data.errors.msg} </span>
+            </div> : null}
             <div className="form-control w-full max-w-xs">
               <label className="label">
                 <span className="label-text text-neutral-900 mb-1">Email:</span>
@@ -57,9 +84,9 @@ const Login = () => {
             </div>
             <Link to={'/forget'} className='text-primary font-sans text-sm block mt-2'>Forgot password?</Link>
 
-            <button type='submit' className='btn btn-block btn-primary mt-8 max-w-xs '>
-
-              Sign In</button>
+            <button type='submit' className={`btn btn-block btn-primary mt-8 max-w-xs `}>
+              {isLoading ? <span className="loading loading-spinner loading-md"></span> : 'Sign in'}
+            </button>
             <p className="text-sm ml-12 md:ml-16 xl:ml-24 font-normal font-sans text-neutral-900 mb-2 mt-2">Don't have an account? </p>
 
             <Link to={"/signup"} className=' btn btn-secondary btn-block max-w-xs'> Sign up</Link>
@@ -73,7 +100,7 @@ const Login = () => {
           </form>
 
         </div>
-      </div>
+      </div >
 
     </>
   )

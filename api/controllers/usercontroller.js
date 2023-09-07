@@ -90,3 +90,9 @@ export const Signin = async (req, res) => {
 
 }
 
+export const logout = (req, res) => {
+  res.clearCookie("acces_token")
+    .status(200)
+    .json({ msg: "logout" })
+}
+

@@ -1,28 +1,52 @@
 import React, { useEffect } from 'react'
 import ImgBG from '../assets/LoginBG.jpeg'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useSelector } from 'react-redux'
+import { useRegisterMutation } from '../slices/UserSlice'
 
 const Signup = () => {
-  useEffect(() => {
-    document.title = 'Signup | CholoJai.xyz'
-  }, [])
+
   const schema = yup.object().shape({
     name: yup.string().required("Name is required"),
     username: yup.string().min(5).required("Username is required"),
     email: yup.string().email().required("Valid email is required"),
-    password: yup.string().min(8).required("Password is required"),
+    password: yup.string().min(5).required("Password is required"),
     role: yup.boolean().required("Role is required")
   })
+  const { User } = useSelector((state) => state.auth)
+  const navigate = useNavigate()
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   });
+  const [RegissterApi, { isLoading, error }] = useRegisterMutation()
+  useEffect(() => {
+    document.title = 'Signup | CholoJai.xyz'
+    if (User) {
+      navigate('/')
+
+    }
+  }, [User])
   console.log(errors)
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    console.log("==> Prev", data)
+    if (data.role == true) {
+      data.role = 'ORG'
+    } else {
+      data.role = 'USER'
+    }
     console.log(data)
+    try {
+      const res = await RegissterApi(data).unwrap()
+      console.log(res)
+      navigate('/signin')
+    } catch (err) {
+
+    }
+
   }
   return (
     <>
@@ -45,6 +69,9 @@ const Signup = () => {
           <form className='bg-white w-[70%] mx-auto md:mx-auto' onSubmit={handleSubmit(onSubmit)}>
             <h1 className="text-neutral-900 font-bold text-2xl mb-1">Hello Welcome!</h1>
             <p className="text-sm font-normal font-sans text-neutral-900 mb-7">Please provide your information</p>
+            {error?.data ? <div className="alert alert-error w-full max-w-xs text-sm text-white">
+              <span> {error.data.errors.msg} </span>
+            </div> : null}
             <div className="form-control w-full max-w-xs">
               <label className="label">
                 <span className="label-text text-neutral-900 mb-1">Name:</span>
@@ -76,7 +103,7 @@ const Signup = () => {
               <label className="label">
                 <span className="label-text text-neutral-900 mb-1 mt-1">Password:</span>
               </label>
-              <input type="password" placeholder="Passsword" className={`input input-bordered  ${errors.name ? 'input-error' : 'input-info'} sm:max-w-sm w-full max-w-xs bg-white`} {...register("password")} />
+              <input type="password" placeholder="Passsword" className={`input input-bordered  ${errors.password ? 'input-error' : 'input-info'} sm:max-w-sm w-full max-w-xs bg-white`} {...register("password")} />
             </div>
             <div className="form-control w-full max-w-xs mt-2">
               <label className="label cursor-pointer">
@@ -86,8 +113,7 @@ const Signup = () => {
             </div>
 
             <button type='submit' className='btn btn-block btn-primary mt-8 max-w-xs '>
-
-              Sign up</button>
+              {isLoading ? <span className="loading loading-spinner loading-md"></span> : 'Sign up'}</button>
             <p className="text-sm ml-12 md:ml-16 xl:ml-24  font-normal font-sans text-neutral-900 mb-2 mt-2">Already have an account? </p>
 
             <Link to={"/signin"} className=' btn btn-secondary btn-block max-w-xs'> Sign in</Link>

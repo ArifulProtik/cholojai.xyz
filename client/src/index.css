@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Noticia+Text:ital,wght@0,400;0,700;1,400;1,700&family=Poppins:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,3 +8,25 @@
 body {
   font-family: 'Poppins', sans-serif;
 }
+
+.my-text {
+  outline: none;
+  background-color: transparent;
+  border:none; 
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1rem
+}
+
+
+.ql-container{
+  font-size: 1.5rem !important; 
+  font-family: 'Noticia Text', serif !important;
+}
+.ql-editor {
+  padding: 0px !important;
+  margin: 0px !important;
+  margin-top: 1rem !important;
+  min-height: 600px !important;
+}
+

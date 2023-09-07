@@ -24,6 +24,10 @@ model User {
   Blog          Blog[]
   Comment       Comment[]
   Like          Like[]
+  Package       Package[]
+  Review        Review[]
+  packageId     String?
+  Order         Order[]
 }
 
 model Blog {
@@ -58,6 +62,49 @@ model Like {
   authorId  String
   blog      Blog     @relation(fields: [blogId], references: [id])
   blogId    String
+}
+
+model Package {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  title         String
+  slug          String   @unique
+  content       String
+  feature_image String
+  price         Float
+  author        User     @relation(fields: [authorId], references: [id])
+  authorId      String
+  tags          String[]
+  departure     DateTime
+  duration      Int
+  location      String
+  Seat          Int
+  aivable_seats Int
+  from_place    String?
+  isFeatured    Boolean  @default(false)
+  Review        Review[]
+  Order         Order[]
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  content   String
+  rating    Int
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  package   Package  @relation(fields: [packageId], references: [id])
+  packageId String
+}
+
+model Order {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  package   Package  @relation(fields: [packageId], references: [id])
+  packageId String
+  status    String   @default("pending")
 }
 
 enum Role {

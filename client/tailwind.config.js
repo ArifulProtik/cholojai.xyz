@@ -12,6 +12,9 @@ export default {
       gray: "#9ca3af"
 
     },
+    fontFamily: {
+      content: ['Noticia Text', 'serif']
+    },
     container: {
       center: true,
     },

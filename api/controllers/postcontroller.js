@@ -9,7 +9,6 @@ export const PostValidation = [
   body("title").trim().notEmpty().withMessage("Title field Required"),
   body("content").notEmpty().withMessage("Content is required"),
   body("feature_image").notEmpty().isURL().withMessage("Musst Be A Valid URL"),
-  body("tags").notEmpty().withMessage("tags field is Required"),
 ]
 
 export const CreatePost = async (req, res) => {
@@ -51,7 +50,7 @@ export const GetAllPosst = async (req, res) => {
   }
   try {
     const totalcount = await prisma.blog.count();
-    const limit = 8;
+    const limit = 6;
     const total_pages = Math.ceil(totalcount / limit);
     if (page > total_pages) {
       return res.status(404).json({
@@ -74,12 +73,14 @@ export const GetAllPosst = async (req, res) => {
         slug: true,
         feature_image: true,
         createdAt: true,
+        tags: true,
         author: {
 
           select: {
             id: true,
             name: true,
             username: true,
+            profile_photo: true
           }
 
         },
@@ -194,12 +195,20 @@ export const GetSinglePost = async (req, res) => {
             name: true,
             id: true
           }
-        }
+        },
+        _count: {
+          select: {
+            Like: true,
+            Comment: true,
+          },
+
+        },
       }
     })
     return res.status(200).json(data)
 
   } catch (error) {
+    console.log(error)
     return res.status(401).json({
       "errors": {
         "msg": "Not Found"
