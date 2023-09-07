@@ -15,6 +15,9 @@ import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en.json'
 import WriteBlog from './pages/WriteBlog.jsx'
 import SinglePost from './pages/SinglePost.jsx'
+import { Packages } from './pages/Packages.jsx'
+import Dashboard from './pages/Dashboard.jsx'
+import { Search } from './pages/Search.jsx'
 
 TimeAgo.addDefaultLocale(en)
 
@@ -25,9 +28,12 @@ const router = createBrowserRouter(createRoutesFromElements(
     <Route path='/signin' element={<Login />} />
     <Route path='/signup' element={<Signup />} />
     <Route path='/:slug' element={<SinglePost />} />
+    <Route path='/pack/:slug' element={<Packages />} />
+    <Route path='/search' element={<Search />} />
     <Route path='' element={<PrivateRoute />}>
       <Route path='/profile' element={<Profile />} />
       <Route path='/write' element={<WriteBlog />} />
+      <Route path='/dashboard' element={<Dashboard />} />
     </Route>
 
 

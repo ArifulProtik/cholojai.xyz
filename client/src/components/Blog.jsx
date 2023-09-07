@@ -23,7 +23,7 @@ export const Blog = (props) => {
                 <div key={post.id} class="card w-full bg-white shadow-xl cursor-pointer">
                   <figure><img className='w-full h-64' src={post.feature_image} alt="Shoes" /></figure>
                   <div className="card-body">
-                    <h2 className="card-title text-primary">
+                    <h2 className="card-title text-secondary">
                       {post.title}
                     </h2>
                     <div className='flex items-start mt-1'>

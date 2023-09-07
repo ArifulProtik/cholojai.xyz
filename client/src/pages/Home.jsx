@@ -23,7 +23,7 @@ const Home = () => {
       <div className="bg-white">
         <Hero />
       </div>
-      <Product mydata={mypack} />
+      <Product title="Latest Packages" mydata={mypack} />
       <Blog data={data} />
       <Footer />
     </>

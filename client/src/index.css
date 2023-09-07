@@ -29,4 +29,13 @@ body {
   margin-top: 1rem !important;
   min-height: 600px !important;
 }
-
+.hero-content {
+  max-width: 150rem !important;
+}
+.searchinput {
+  outline: none;
+  border: none;
+  color: #000;
+  width: 360px;
+  font-size: 1.2rem;
+}

@@ -10,8 +10,27 @@ export const PackageApiSlice = apiSlice.injectEndpoints({
         url: PACKAGES_URL,
         method: "GET",
       })
-    })
+    }),
+    getPackageBySlug: builder.query({
+      query: (slug) => ({
+        url: `${PACKAGES_URL}/${slug}`,
+        method: "GET",
+      })
+    }),
+    CreatePackage: builder.mutation({
+      query: (data) => ({
+        url: PACKAGES_URL,
+        method: "POST",
+        body: data,
+      })
+    }),
+    SearchPackages: builder.query({
+      query: (search) => ({
+        url: `/api/search?searchq=${search}`,
+        method: "GET",
+      })
+    }),
   })
 })
 
-export const { useGetPackagesQuery } = PackageApiSlice;
+export const { useGetPackagesQuery, useGetPackageBySlugQuery, useCreatePackageMutation, useSearchPackagesQuery } = PackageApiSlice;

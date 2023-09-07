@@ -3,17 +3,18 @@ import { Link } from 'react-router-dom'
 
 const Product = (props) => {
   const data = props.mydata
+  const sectiontitle = props.title
   console.log(data)
   return (
     <>
-      <div class="flex flex-col w-full">
+      <div class="flex flex-col w-full mb-8">
         <div className='container mt-8 p-2'>
-          <h1 className="text-sm md:text-xl font-bold font-sans text-primary">Latest Tour Packages</h1>
+          <h1 className="text-sm md:text-xl font-bold font-sans text-primary">{sectiontitle}</h1>
         </div>
         <div class="divider"></div>
         <div className="container">
           <div className="grid-cols-1 sm:grid md:grid-cols-3 ">
-            {data?.map((pack) =>
+            {data && data?.map((pack) =>
 
               <div key={pack.id} className="mx-3 mt-6 flex flex-col rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] sm:shrink-0 sm:grow sm:basis-0">
                 <a href="#!">
@@ -47,7 +48,7 @@ const Product = (props) => {
                   </div>
                   <div className='divider'></div>
                   <div className="flex justify-between mt-4">
-                    <Link className='w-full' to={`/package/${pack.id}`}>
+                    <Link className='w-full' to={`/pack/${pack.slug}`}>
                       <button className="btn btn-block btn-outline btn-secondary">View Details</button>
                     </Link>
 
